@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Família é Tudo - Gestão Cartola FC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a2f1f 0%, #064e2b 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        /* campo gramado/futebol */
+        .campo-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.08;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%232d6a4f"/><circle cx="400" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="400" y1="0" x2="400" y2="600" stroke="white" stroke-width="4"/><circle cx="400" cy="300" r="8" fill="white"/><rect x="0" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><rect x="640" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><line x1="800" y1="280" x2="640" y2="280" stroke="white" stroke-width="4"/><line x1="800" y1="320" x2="640" y2="320" stroke="white" stroke-width="4"/><line x1="0" y1="280" x2="160" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="320" x2="160" y2="320" stroke="white" stroke-width="4"/><circle cx="90" cy="300" r="8" fill="white"/><circle cx="710" cy="300" r="8" fill="white"/></svg>');
+            background-repeat: repeat;
+            background-size: 180px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* header estilizado */
+        .cabecalho {
+            background: #0e2a1fdd;
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid #f1c40f66;
+        }
+
+        .titulo-area {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .bola-icon {
+            background: #f5f5dc;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 0 0 4px #2ecc71, 0 0 0 8px #f1c40f;
+        }
+
+        h1 {
+            color: #FFE484;
+            font-size: 1.9rem;
+            text-shadow: 3px 3px 0 #b45f1b;
+            letter-spacing: -0.5px;
+        }
+
+        .sub {
+            color: #cfe9d7;
+            font-weight: 500;
+        }
+
+        .admin-acesso {
+            background: #2c3e2b;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .admin-acesso input {
+            background: #f9f3cf;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            text-align: center;
+            width: 140px;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f39c12;
+            color: #1e2a1b;
+            box-shadow: 0 3px 0 #b45f1b;
+        }
+
+        .btn-admin {
+            background: #e67e22;
+            color: white;
+        }
+
+        .btn-admin:hover, .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        /* cards estatísticas */
+        .cards-premios {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .card-premio {
+            background: #fef9e6;
+            border-radius: 28px;
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+            border-left: 8px solid #f1c40f;
+            text-align: center;
+        }
+
+        .card-premio h3 {
+            color: #1f543b;
+            font-size: 1.3rem;
+        }
+
+        .valor {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #e67e22;
+            margin: 12px 0;
+        }
+
+        .card-acumulado {
+            background: #1f3d2c;
+            color: #f9e7b3;
+            border-left-color: #e67e22;
+        }
+        .card-acumulado h3, .card-acumulado .valor {
+            color: #FFD966;
+        }
+
+        /* tabela de participantes */
+        .tabela-participantes {
+            background: #0e2c1dd9;
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            border: 1px solid #86b30066;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #F0F7E6;
+        }
+
+        th {
+            background: #f1c40fcc;
+            color: #1e3a2b;
+            padding: 14px 8px;
+            font-size: 1rem;
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #609f6e;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .time-cell {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-vitorias {
+            background: #f39c12;
+            color: #1e2a1f;
+            border-radius: 60px;
+            padding: 2px 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .historico-area {
+            background: #fef5e0;
+            border-radius: 28px;
+            padding: 20px;
+        }
+
+        .historico-titulo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 3px dashed #e67e22;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .lista-historico {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-ganhador {
+            background: #fff4e0;
+            border-radius: 40px;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 10px solid #e67e22;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-novo {
+            background: #2c6e4a;
+            color: white;
+            padding: 12px 28px;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000000aa;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .modal-aberto {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-conteudo {
+            background: #fff9ef;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 48px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 25px 40px black;
+        }
+
+        .modal-conteudo select, .modal-conteudo input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 60px;
+            border: 2px solid #e2c17e;
+            font-size: 1rem;
+        }
+
+        .footer-cred {
+            text-align: center;
+            margin-top: 30px;
+            color: #e6f7e6;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 800px) {
+            h1 { font-size: 1.2rem; }
+            .cabecalho { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="campo-bg"></div>
+<div class="container">
+    <div class="cabecalho">
+        <div class="titulo-area">
+            <div class="bola-icon">⚽</div>
+            <div>
+                <h1>🏆 Família é Tudo 🏆</h1>
+                <div class="sub">Cartola FC — Grupo Mensal + Acumulado Final</div>
+            </div>
+        </div>
+        <div class="admin-acesso">
+            <input type="password" id="senhaAdminInput" placeholder="Senha Admin" value="">
+            <button id="btnLiberarAdmin" class="btn btn-admin">🔓 Modo Admin</button>
+            <span id="statusAdmin" style="font-size:12px; color:#FFD966;">👤 visitante</span>
+        </div>
+    </div>
+
+    <!-- cards prêmios -->
+    <div class="cards-premios">
+        <div class="card-premio">
+            <h3>💰 Prêmio Mensal (por rodada)</h3>
+            <div class="valor" id="premioMensalDisplay">R$ 0,00</div>
+            <small>Ganhador mensal leva R$10 de cada colega (exceto ele mesmo)</small>
+        </div>
+        <div class="card-premio card-acumulado">
+            <h3>🏆 Acumulado Final do Campeonato</h3>
+            <div class="valor" id="acumuladoFinalDisplay">R$ 0,00</div>
+            <small>R$5,00 por participante por rodada -> vencedor final leva tudo!</small>
+        </div>
+    </div>
+
+    <!-- tabela dos 7 times -->
+    <div class="tabela-participantes">
+        <table>
+            <thead>
+                <tr><th>Time / Responsável</th><th>🏅 Vitórias Mensais</th><th>💰 Total Ganho (Mensal)</th><th>🥅 Vezes no Acumulado</th></tr>
+            </thead>
+            <tbody id="tabelaTimesBody">
+                <!-- dados em JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Histórico de ganhadores mensais + área admin -->
+    <div class="historico-area">
+        <div class="historico-titulo">
+            <span style="font-size: 2rem;">📜</span>
+            <h2>Histórico de Ganhadores Mensais</h2>
+            <button id="btnAbrirModalNovo" class="btn btn-novo" style="margin-left: auto;">➕ Novo Ganhador (Admin)</button>
+        </div>
+        <div id="listaGanhadores" class="lista-historico">
+            <!-- lista dinâmica -->
+            <div style="padding:20px; text-align:center;">Carregando...</div>
+        </div>
+        <div class="footer-cred" style="margin-top: 20px;">
+            ⚡ Regras: Mensal: cada participante paga R$10 ao ganhador. Acumulado final: cada participante deposita R$5 por rodada para o pote final; o dono da maior pontuação TOTAL no campeonato leva tudo.
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Ganhador -->
+<div id="modalNovoGanhador" class="modal">
+    <div class="modal-conteudo">
+        <h2>⚽ Registrar Novo Ganhador Mensal</h2>
+        <p>Rodada atual (próxima rodada: 02/05/2026)</p>
+        <label>Selecione o vencedor:</label>
+        <select id="selectVencedor"></select>
+        <button id="btnConfirmarGanhador" class="btn" style="background:#2c6e4a; color:white; width:100%; margin-top:16px;">✅ Confirmar Ganhador Mensal</button>
+        <button id="btnFecharModal" style="margin-top:12px; background:gray;">Cancelar</button>
+        <div id="msgModalErro" style="color:red; margin-top:10px;"></div>
+    </div>
+</div>
+
+<script>
+    // ---------- DADOS INICIAIS ----------
+    // Membros fixos: 7 participantes (ordem mantida)
+    const membros = [
+        { id: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi" },
+        { id: 1, nomeTime: "Só 1° turno FC", responsavel: "PStresser" },
+        { id: 2, nomeTime: "ARSF FC", responsavel: "Alisson Reno" },
+        { id: 3, nomeTime: "Jaberi fc", responsavel: "Edvaldo Silva" },
+        { id: 4, nomeTime: "Frangokinor Fc", responsavel: "Victor Braz" },
+        { id: 5, nomeTime: "Rep.Checas Sócanela FC", responsavel: "Bruno Braz" },
+        { id: 6, nomeTime: "Banca RVL FC", responsavel: "Israel Furquim" }
+    ];
+
+    // Cada membro possui: vitoriasMensais (quantidade), totalGanhoMensal (R$ acumulado que recebeu), totalPagoAcumuladoNao se aplica
+    let wins = new Array(7).fill(0);
+    let ganhoMensalTotal = new Array(7).fill(0); // total recebido em premios mensais
+    // Histórico de ganhadores mensais (cada registro: { index, nomeTime, responsavel, premioRecebido, rodadaData, rodadaNum })
+    let historicoGanhadores = [];
+
+    // Acumulado Final: pote total = R$5 * (n° de rodadas já pagas por todos). Iniciaremos com base no problema: 3 rodadas concluídas (1°,2°,3° ganhador listado)
+    // cada rodada contribui com R$5 x 7 participantes = R$35 pro pote final. Porém o enunciado: "outros 5,00 é depositado na conta chave pix até o final, quem tiver maior pontuação total ganha tudo"
+    // signfica que a cada rodada mensal, os 7 participantes pagam 5 reais (cada) para o pote final. Portanto já tivemos 3 rodadas => 3*35 = R$105. O pote final será acumulado.
+    let totalAcumuladoFinal = 0; // valor atual do pote final
+    let rodadasRealizadas = 0;   // contador de rodadas mensais já ocorridas
+
+    // PRÊMIO MENSAL: ganhador recebe R$10 de cada um dos outros 6 participantes => R$60,00 fixo
+    const PREMIO_MENSAL = 60;  // (7-1)*10
+
+    // INICIALIZAR com os três ganhadores informados:
+    // 1: ExperiMonstra (id0) - depositado de cada um 10,00 => recebeu 60 reais e +5 p/ pote final
+    // 2: Só 1° turno FC (id1) - 15,00 de cada um? ATENÇÃO: enunciado 2° ganhador: "depositado de cada um 15,00 para a conta dela e outros 5,00 p/ final" -> Prêmio extra de R$15 de cada? Mas a regra geral é 10? Vou interpretar que o grupo teve uma regra especial no segundo mês? Porém para manter consistência, a mecânica do sistema deve ser padronizada: por padrão todo ganhador mensal recebe R$10 de cada um = R$60. Mas o histórico mostra que o segundo ganhador recebeu R$15 de cada um = R$90 (15*6). Para respeitar o passado vamos inserir manualmente os valores recebidos diferentes no histórico.
+    // Terceiro: ExperiMonstra novamente (id0) - R$10 de cada = R$60.
+    // Precisamos inicializar os ganhos individuais e o acumulado final baseado nas 3 rodadas com 5,00 cada participante.
+    // Vamos popular de acordo:
+    function inicializarComHistorico() {
+        // rodada 1: Ganhador ExperiMonstra (id0) recebeu 60,00 (10 de cada). (Pote final: +35)
+        adicionarGanhadorNoInit(0, 60, 1);
+        // rodada 2: Só 1° turno FC (id1) recebeu 15 de cada um => 90 reais. (Pote final +35)
+        adicionarGanhadorNoInit(1, 90, 2);
+        // rodada 3: ExperiMonstra (id0) recebeu 60,00 (Pote final +35)
+        adicionarGanhadorNoInit(0, 60, 3);
+
+        // Agora o pote final total baseado em 3 rodadas: 3 * (7*5) = 105
+        totalAcumuladoFinal = rodadasRealizadas * 35; // 3*35 = 105
+        // sincroniza ganhos mensais acumulados
+    }
+
+    function adicionarGanhadorNoInit(winnerId, premioRecebido, nRodada) {
+        wins[winnerId]++;
+        ganhoMensalTotal[winnerId] += premioRecebido;
+        historicoGanhadores.push({
+            index: winnerId,
+            nomeTime: membros[winnerId].nomeTime,
+            responsavel: membros[winnerId].responsavel,
+            premio: premioRecebido,
+            rodadaNum: nRodada,
+            dataStr: nRodada===1?"(1ª Rodada - passada)":(nRodada===2?"(2ª Rodada - especial R$15 cada)":"(3ª Rodada - padrão)")
+        });
+        rodadasRealizadas = nRodada; // vai sobescrever
+    }
+
+    // Função registrar novo ganhador (apenas modo admin e com validação)
+    function registrarNovoGanhador(winnerId) {
+        // prêmio padrão = 60 reais
+        const premio = PREMIO_MENSAL;
+        const novaRodada = rodadasRealizadas + 1;
+        // adiciona ganhos e histórico
+        wins[winnerId]++;
+        ganhoMensalTotal[winnerId] += premio;
+        historicoGanhadores.push({
+            index: winnerId,
+            nomeTime: membros[winnerId].nomeTime,
+            responsavel: membros[winnerId].responsavel,
+            premio: premio,
+            rodadaNum: novaRodada,
+            dataStr: `⚽ Rodada ${novaRodada} (após 02/05/2026)`
+        });
+        rodadasRealizadas = novaRodada;
+        // atualiza pote final: cada rodada todos pagam R$5 => +35 reais
+        totalAcumuladoFinal += 35;
+        salvarDadosLocal();
+        renderizarTudo();
+    }
+
+    // Persistência LocalStorage
+    function carregarDados() {
+        const data = localStorage.getItem("cartolaFamiliaData");
+        if(data) {
+            try{
+                const obj = JSON.parse(data);
+                wins = obj.wins;
+                ganhoMensalTotal = obj.ganhoMensalTotal;
+                historicoGanhadores = obj.historicoGanhadores;
+                totalAcumuladoFinal = obj.totalAcumuladoFinal;
+                rodadasRealizadas = obj.rodadasRealizadas;
+                if(wins.length !==7) throw new Error("migracao");
+                return true;
+            }catch(e){}
+        }
+        // fallback dados iniciais
+        wins = [0,0,0,0,0,0,0];
+        ganhoMensalTotal = [0,0,0,0,0,0,0];
+        historicoGanhadores = [];
+        totalAcumuladoFinal = 0;
+        rodadasRealizadas = 0;
+        inicializarComHistorico();
+        return true;
+    }
+
+    function salvarDadosLocal() {
+        const dados = {
+            wins, ganhoMensalTotal, historicoGanhadores, totalAcumuladoFinal, rodadasRealizadas
+        };
+        localStorage.setItem("cartolaFamiliaData", JSON.stringify(dados));
+    }
+
+    // Renderização completa
+    function renderizarTudo() {
+        // Tabela participantes
+        const tbody = document.getElementById("tabelaTimesBody");
+        tbody.innerHTML = "";
+        for(let i=0;i<membros.length;i++) {
+            const m = membros[i];
+            const tr = document.createElement("tr");
+            const vitorias = wins[i];
+            const totalGanho = ganhoMensalTotal[i];
+            // vezes que entrou no acumulado? conceito: "Vezes no Acumulado" - não é um pagamento, mas todos colaboram, mas p/ info deixar quantas vezes foi ganhador mensal (participação no campeonato do pote final?) porém utilizei badge simples.
+            tr.innerHTML = `
+                <td style="text-align:left;"><div class="time-cell"><span style="font-size:1.5rem;">⚽</span> <strong>${m.nomeTime}</strong><br><small>${m.responsavel}</small></div></td>
+                <td><span class="badge-vitorias">${vitorias} título${vitorias!==1?'s':''}</span></td>
+                <td style="color:#FFE484; font-weight:bold;">R$ ${totalGanho.toFixed(2)}</td>
+                <td>💰 ${(vitorias)}x na disputa</td>
+            `;
+            tbody.appendChild(tr);
+        }
+        // Atualiza cards
+        document.getElementById("premioMensalDisplay").innerHTML = `R$ ${PREMIO_MENSAL.toFixed(2)} <small style="font-size:0.8rem;">(pago pelos outros 6)</small>`;
+        document.getElementById("acumuladoFinalDisplay").innerHTML = `R$ ${totalAcumuladoFinal.toFixed(2)}`;
+
+        // Histórico ganhadores
+        const listaDiv = document.getElementById("listaGanhadores");
+        if(historicoGanhadores.length === 0) {
+            listaDiv.innerHTML = "<div style='padding:20px; text-align:center;'>Nenhum ganhador registrado ainda.</div>";
+        } else {
+            listaDiv.innerHTML = "";
+            historicoGanhadores.slice().reverse().forEach(ganh => {
+                const divCard = document.createElement("div");
+                divCard.className = "card-ganhador";
+                divCard.innerHTML = `
+                    <div><strong>🏆 ${ganh.nomeTime}</strong> - ${ganh.responsavel}<br><span style="font-size:0.8rem;">${ganh.dataStr || `Rodada ${ganh.rodadaNum}`}</span></div>
+                    <div style="background:#e67e22; padding:6px 15px; border-radius:40px; color:white;">R$ ${ganh.premio.toFixed(2)}</div>
+                `;
+                listaDiv.appendChild(divCard);
+            });
+        }
+    }
+
+    // Estado Admin
+    let adminMode = false;
+    function atualizarInterfaceAdmin() {
+        const btnNovo = document.getElementById("btnAbrirModalNovo");
+        if(adminMode) {
+            btnNovo.disabled = false;
+            btnNovo.style.opacity = "1";
+            document.getElementById("statusAdmin").innerHTML = "🔓 ADMIN ativo";
+        } else {
+            btnNovo.disabled = true;
+            btnNovo.style.opacity = "0.5";
+            document.getElementById("statusAdmin").innerHTML = "👤 visitante (somente leitura)";
+        }
+    }
+
+    // Modal
+    const modal = document.getElementById("modalNovoGanhador");
+    const selectVencedor = document.getElementById("selectVencedor");
+    function popularSelectVencedor() {
+        selectVencedor.innerHTML = "";
+        membros.forEach((m, idx) => {
+            const option = document.createElement("option");
+            option.value = idx;
+            option.textContent = `${m.nomeTime} - ${m.responsavel}`;
+            selectVencedor.appendChild(option);
+        });
+    }
+
+    // Validação de senha (padrão 1a2b3c4d)
+    const senhaPadrao = "1a2b3c4d";
+    document.getElementById("btnLiberarAdmin").addEventListener("click", () => {
+        const senhaInput = document.getElementById("senhaAdminInput").value;
+        if(senhaInput === senhaPadrao) {
+            adminMode = true;
+            atualizarInterfaceAdmin();
+            document.getElementById("senhaAdminInput").value = "";
+        } else {
+            alert("Senha incorreta! Acesso negado.");
+            adminMode = false;
+            atualizarInterfaceAdmin();
+        }
+    });
+
+    // Abrir modal (verificação admin)
+    document.getElementById("btnAbrirModalNovo").addEventListener("click", () => {
+        if(!adminMode) {
+            alert("Apenas ADMIN com senha pode registrar novo ganhador!");
+            return;
+        }
+        popularSelectVencedor();
+        document.getElementById("msgModalErro").innerText = "";
+        modal.classList.add("modal-aberto");
+    });
+    document.getElementById("btnFecharModal").addEventListener("click", () => {
+        modal.classList.remove("modal-aberto");
+    });
+    document.getElementById("btnConfirmarGanhador").addEventListener("click", () => {
+        if(!adminMode) {
+            alert("Permissão negada.");
+            modal.classList.remove("modal-aberto");
+            return;
+        }
+        const winnerIdx = parseInt(selectVencedor.value);
+        if(isNaN(winnerIdx)) return;
+        // verificacao extra: não pode repetir regras, só registrar normalmente.
+        registrarNovoGanhador(winnerIdx);
+        modal.classList.remove("modal-aberto");
+        renderizarTudo();
+    });
+
+    // Inicialização
+    carregarDados();
+    renderizarTudo();
+    atualizarInterfaceAdmin();
+    // Limpar qualquer modal aberto com clique fora
+    window.onclick = function(e) {
+        if(e.target === modal) modal.classList.remove("modal-aberto");
+    };
+    // A cada alteração salvar quando registrar (já salva em registrarNovoGanhador)
+    // Ao carregar dados já salvos não sobrescrever.
+    // Força sincronia extra
+    window.addEventListener("beforeunload", () => { salvarDadosLocal(); });
+    // Caso admin queira limpar, não; mas tudo ok.
+    // Exibe também bônus de lógica total.
+    // garantir que ganhos estejam coerentes após carregar.
+    console.log("Sistema pronto! ⚽🏆");
+</script>
+</body>
+</html>
