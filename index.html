@@ -31,7 +31,7 @@
             height: 100%;
             opacity: 0.08;
             pointer-events: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%232d6a4f"/><circle cx="400" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="400" y1="0" x2="400" y2="600" stroke="white" stroke-width="4"/><circle cx="400" cy="300" r="8" fill="white"/><rect x="0" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><rect x="640" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><line x1="800" y1="280" x2="640" y2="280" stroke="white" stroke-width="4"/><line x1="800" y1="320" x2="640" y2="320" stroke="white" stroke-width="4"/><line x1="0" y1="280" x2="160" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="320" x2="160" y2="320" stroke="white" stroke-width="4"/><circle cx="90" cy="300" r="8" fill="white"/><circle cx="710" cy="300" r="8" fill="white"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%232d6a4f"/><circle cx="400" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="400" y1="0" x2="400" y2="600" stroke="white" stroke-width="4"/><circle cx="400" cy="300" r="8" fill="white"/><rect x="0" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><rect x="640" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><line x1="800" y1="280" x2="640" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="280" x2="160" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="320" x2="160" y2="320" stroke="white" stroke-width="4"/><circle cx="90" cy="300" r="8" fill="white"/><circle cx="710" cy="300" r="8" fill="white"/></svg>');
             background-repeat: repeat;
             background-size: 180px;
         }
@@ -260,6 +260,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .badge-vitorias {
@@ -276,6 +277,16 @@
             background: linear-gradient(135deg, #ffd700, #ffed4a);
             color: #1e2a1f;
             box-shadow: 0 2px 8px rgba(255,215,0,0.3);
+        }
+
+        .badge-lider {
+            background: #ffd700;
+            color: #1e3a2b;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 5px;
         }
 
         .historico-area {
@@ -402,6 +413,7 @@
         @media (max-width: 800px) {
             h1 { font-size: 1.2rem; }
             .cabecalho { flex-direction: column; gap: 15px; }
+            .time-cell { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -446,10 +458,16 @@
     <div class="tabela-participantes">
         <table>
             <thead>
-                <tr><th>Time / Responsável</th><th>🏅 Títulos</th><th>💰 Total Ganho</th><th>📊 Média por Título</th></tr>
+                <tr>
+                    <th>Rank</th>
+                    <th>Time / Responsável</th>
+                    <th>🏅 Títulos</th>
+                    <th>💰 Total Ganho</th>
+                    <th>📊 Média por Título</th>
+                </tr>
             </thead>
             <tbody id="tabelaTimesBody">
-                <tr><td colspan="4" style="text-align:center;">🔄 Carregando dados do Firebase...</td></tr>
+                <tr><td colspan="5" style="text-align:center;">🔄 Carregando dados do Firebase...</td></tr>
             </tbody>
         </table>
     </div>
@@ -601,10 +619,9 @@
     async function inicializarDadosIniciais() {
         const doc = await configRef.get();
         if (!doc.exists) {
-            // CORREÇÃO: ExperiMonstra ganhou 2 vezes (1ª e 3ª rodada)
-            // 1ª rodada: R$60 | 3ª rodada: R$90 | TOTAL: R$150
-            // Só 1° turno FC ganhou 1 vez (2ª rodada): R$90
-            wins = [2, 1, 0, 0, 0, 0, 0]; // ExperiMonstra = 2 títulos
+            // CORREÇÃO: ExperiMonstra ganhou 2 vezes (1ª e 3ª rodada) - ÚNICO LÍDER
+            // Só 1° turno FC ganhou 1 vez (2ª rodada) - VICE-LÍDER
+            wins = [2, 1, 0, 0, 0, 0, 0]; // ExperiMonstra = 2 títulos (LÍDER)
             ganhoMensalTotal = [150, 90, 0, 0, 0, 0, 0]; // ExperiMonstra: 60+90=150
             totalAcumuladoFinal = 105; // 3 rodadas * R$35
             rodadasRealizadas = 3;
@@ -617,7 +634,7 @@
                 ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            // Histórico corrigido
+            // Histórico correto
             const historicoInicial = [
                 { index: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi", premio: 60, rodadaNum: 1, valorPorPessoa: 10, dataStr: "1ª Rodada - R$10,00 de cada participante" },
                 { index: 1, nomeTime: "Só 1° turno FC", responsavel: "PStresser", premio: 90, rodadaNum: 2, valorPorPessoa: 15, dataStr: "2ª Rodada - R$15,00 de cada participante" },
@@ -628,7 +645,7 @@
                 await historicoRef.add({ ...hist, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
             }
             
-            showToast('🎉 Dados iniciais carregados com 2 títulos para o ExperiMonstra!');
+            showToast('🎉 Dados iniciais carregados! ExperiMonstra é o LÍDER com 2 títulos!');
         }
     }
     
@@ -675,29 +692,46 @@
         const tbody = document.getElementById("tabelaTimesBody");
         tbody.innerHTML = "";
         
-        // Encontrar o líder (maior número de títulos)
-        const maxTitulos = Math.max(...wins);
+        // Criar array com índices e ordenar por número de títulos (decrescente)
+        const ranking = [];
+        for (let i = 0; i < membros.length; i++) {
+            ranking.push({
+                id: i,
+                nomeTime: membros[i].nomeTime,
+                responsavel: membros[i].responsavel,
+                vitorias: wins[i],
+                totalGanho: ganhoMensalTotal[i],
+                media: wins[i] > 0 ? (ganhoMensalTotal[i] / wins[i]).toFixed(2) : "0"
+            });
+        }
         
-        for(let i = 0; i < membros.length; i++) {
-            const m = membros[i];
-            const vitorias = wins[i];
-            const totalGanho = ganhoMensalTotal[i];
-            const media = vitorias > 0 ? (totalGanho / vitorias).toFixed(2) : "0";
-            const isLider = vitorias === maxTitulos && vitorias > 0;
+        // Ordenar por títulos (maior para menor)
+        ranking.sort((a, b) => b.vitorias - a.vitorias);
+        
+        // Determinar o verdadeiro líder (primeiro da lista com mais títulos)
+        const maxTitulos = ranking[0]?.vitorias || 0;
+        
+        for (let pos = 0; pos < ranking.length; pos++) {
+            const r = ranking[pos];
+            const isLider = (pos === 0 && r.vitorias === maxTitulos && r.vitorias > 0);
+            const medalha = pos === 0 ? '🥇' : (pos === 1 ? '🥈' : (pos === 2 ? '🥉' : `${pos + 1}º`));
             
             const tr = document.createElement("tr");
             tr.innerHTML = `
+                <td style="text-align:center; font-size:1.2rem; font-weight:bold;">${medalha}</td>
                 <td style="text-align:left;">
                     <div class="time-cell">
-                        <span style="font-size:1.5rem;">${isLider ? '🏆' : '⚽'}</span> 
-                        <strong>${m.nomeTime}</strong><br>
-                        <small>${m.responsavel}</small>
-                        ${isLider ? '<span style="margin-left:8px; font-size:11px; background:gold; color:#1e2a1f; padding:2px 8px; border-radius:20px;">LÍDER</span>' : ''}
+                        <span style="font-size:1.5rem;">${isLider ? '👑' : '⚽'}</span> 
+                        <div>
+                            <strong>${r.nomeTime}</strong>
+                            <br><small>${r.responsavel}</small>
+                            ${isLider ? '<span class="badge-lider">LÍDER DO GRUPO</span>' : ''}
+                        </div>
                     </div>
                 </td>
-                <td><span class="badge-vitorias ${isLider ? 'badge-campeao' : ''}">${vitorias} título${vitorias !== 1 ? 's' : ''}</span></td>
-                <td style="color:#FFE484; font-weight:bold;">R$ ${totalGanho.toFixed(2)}</td>
-                <td>R$ ${media}</td>
+                <td><span class="badge-vitorias ${isLider ? 'badge-campeao' : ''}">${r.vitorias} título${r.vitorias !== 1 ? 's' : ''}</span></td>
+                <td style="color:#FFE484; font-weight:bold;">R$ ${r.totalGanho.toFixed(2)}</td>
+                <td>R$ ${r.media}</td>
             `;
             tbody.appendChild(tr);
         }
@@ -715,13 +749,16 @@
         }
         
         listaDiv.innerHTML = "";
+        // Mostrar histórico em ordem decrescente (mais recente primeiro)
         historicoGanhadores.slice().reverse().forEach(ganh => {
             const divCard = document.createElement("div");
             divCard.className = "card-ganhador";
+            const ehBicampeao = historicoGanhadores.filter(h => h.index === ganh.index && h.rodadaNum <= ganh.rodadaNum).length >= 2;
             divCard.innerHTML = `
                 <div>
                     <strong>🏆 ${ganh.nomeTime}</strong> - ${ganh.responsavel}<br>
                     <span style="font-size:0.75rem;">${ganh.dataStr || `${ganh.rodadaNum}ª Rodada`}</span>
+                    ${ehBicampeao ? '<span style="margin-left:8px; font-size:11px; background:gold; color:#1e2a1f; padding:2px 8px; border-radius:20px;">🏅 BICAMPEÃO</span>' : ''}
                 </div>
                 <div style="background:#e67e22; padding:6px 15px; border-radius:40px; color:white; font-weight:bold;">
                     R$ ${ganh.premio.toFixed(2)}
@@ -737,7 +774,6 @@
             btnNovo.disabled = false;
             btnNovo.style.opacity = "1";
             document.getElementById("statusAdmin").innerHTML = "🔓 ADMIN ativo";
-            showToast('Modo admin ativado! Você pode registrar novos ganhadores.');
         } else {
             btnNovo.disabled = true;
             btnNovo.style.opacity = "0.5";
@@ -776,8 +812,9 @@
             adminMode = true;
             atualizarInterfaceAdmin();
             document.getElementById("senhaAdminInput").value = "";
+            showToast('🔓 Modo admin ativado! Você pode registrar novos ganhadores.');
         } else {
-            showToast('Senha incorreta! Acesso negado.', true);
+            showToast('❌ Senha incorreta! Acesso negado.', true);
             adminMode = false;
             atualizarInterfaceAdmin();
         }
