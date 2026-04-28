@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Família é Tudo - Cartola FC | Tempo Real</title>
+    <title>Família é Tudo - Cartola FC</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -42,35 +42,6 @@
             margin: 0 auto;
             position: relative;
             z-index: 2;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 15px;
-            color: white;
-            font-weight: bold;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: #ffd700;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         .cabecalho {
@@ -605,17 +576,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    
-    // CONFIGURAR FIRESTORE COM REGRAS PERMISSIVAS (para teste)
-    // IMPORTANTE: No console do Firebase, configure as regas como:
-    // rules_version = '2';
-    // service cloud.firestore {
-    //   match /databases/{database}/documents {
-    //     match /{document=**} {
-    //       allow read, write: if true;
-    //     }
-    //   }
-    // }
 
     const MEMBROS = [
         { id: 0, time: "ExperiMonstra", resp: "Leandro Takahashi" },
@@ -627,21 +587,20 @@
         { id: 6, time: "Banca RVL FC", resp: "Israel Furquim" }
     ];
 
-    let dados = {
-        titulos: [2, 1, 0, 0, 0, 0, 0],
-        totalGanho: [150, 90, 0, 0, 0, 0, 0],
-        poteFinal: 105,
-        rodadas: 3,
-        historico: [
-            { index: 0, time: "ExperiMonstra", resp: "Leandro Takahashi", premio: 60, rodada: 1, valor: 10 },
-            { index: 1, time: "Só 1° turno FC", resp: "PStresser", premio: 90, rodada: 2, valor: 15 },
-            { index: 0, time: "ExperiMonstra", resp: "Leandro Takahashi", premio: 90, rodada: 3, valor: 15 }
-        ],
-        pagamentos: { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false }
-    };
-
+    // DADOS INICIAIS CORRETOS
+    let titulos = [2, 1, 0, 0, 0, 0, 0];
+    let totalGanho = [150, 90, 0, 0, 0, 0, 0];
+    let poteFinal = 105;
+    let rodadas = 3;
+    let historico = [
+        { index: 0, time: "ExperiMonstra", resp: "Leandro Takahashi", premio: 60, rodada: 1, valor: 10 },
+        { index: 1, time: "Só 1° turno FC", resp: "PStresser", premio: 90, rodada: 2, valor: 15 },
+        { index: 0, time: "ExperiMonstra", resp: "Leandro Takahashi", premio: 90, rodada: 3, valor: 15 }
+    ];
+    let pagamentos = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+    
     let admin = false;
-    let loading = true;
+    let primeiroCarregamento = true;
 
     function valorPorPessoa(rodadaNum) { return rodadaNum === 1 ? 10 : 15; }
     function premioRodada(rodadaNum) { return rodadaNum === 1 ? 60 : 90; }
@@ -660,14 +619,44 @@
         showToast('✅ Chave Pix copiada!');
     }
 
-    // SALVAR NO FIRESTORE
-    async function salvarConfigFirestore() {
+    // INICIALIZAR DADOS NO FIREBASE
+    async function inicializarFirebase() {
         try {
-            await db.collection('config').doc('main').set({
-                titulos: dados.titulos,
-                totalGanho: dados.totalGanho,
-                poteFinal: dados.poteFinal,
-                rodadas: dados.rodadas,
-                atualizado: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        } catch (e)
+            // Verificar se já existe dados
+            const configDoc = await db.collection('config').doc('main').get();
+            
+            if (!configDoc.exists) {
+                // Criar configuração inicial
+                await db.collection('config').doc('main').set({
+                    titulos: titulos,
+                    totalGanho: totalGanho,
+                    poteFinal: poteFinal,
+                    rodadas: rodadas,
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Criar histórico
+                for (const h of historico) {
+                    await db.collection('historico').add({
+                        ...h,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                // Criar pagamentos
+                await db.collection('pagamentos').doc('rodada_4').set({
+                    pagamentos: pagamentos,
+                    data: new Date().toISOString()
+                });
+                
+                showToast('✅ Banco de dados inicializado!');
+            }
+            
+            // Carregar dados em tempo real
+            carregarTempoReal();
+            
+        } catch (error) {
+            console.error('Erro ao inicializar:', error);
+            showToast('Erro de conexão com Firebase', true);
+            // Mesmo com erro, mostrar dados locais
+     
