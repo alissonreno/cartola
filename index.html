@@ -31,7 +31,7 @@
             height: 100%;
             opacity: 0.08;
             pointer-events: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%232d6a4f"/><circle cx="400" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="400" y1="0" x2="400" y2="600" stroke="white" stroke-width="4"/><circle cx="400" cy="300" r="8" fill="white"/><rect x="0" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><rect x="640" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><line x1="800" y1="280" x2="640" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="280" x2="160" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="320" x2="160" y2="320" stroke="white" stroke-width="4"/><circle cx="90" cy="300" r="8" fill="white"/><circle cx="710" cy="300" r="8" fill="white"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%232d6a4f"/><circle cx="400" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="400" y1="0" x2="400" y2="600" stroke="white" stroke-width="4"/><circle cx="400" cy="300" r="8" fill="white"/><rect x="0" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><rect x="640" y="220" width="160" height="160" fill="none" stroke="white" stroke-width="4"/><line x1="800" y1="280" x2="640" y2="280" stroke="white" stroke-width="4"/><line x1="800" y1="320" x2="640" y2="320" stroke="white" stroke-width="4"/><line x1="0" y1="280" x2="160" y2="280" stroke="white" stroke-width="4"/><line x1="0" y1="320" x2="160" y2="320" stroke="white" stroke-width="4"/><circle cx="90" cy="300" r="8" fill="white"/><circle cx="710" cy="300" r="8" fill="white"/></svg>');
             background-repeat: repeat;
             background-size: 180px;
         }
@@ -161,6 +161,19 @@
             transform: none;
         }
 
+        .btn-pagar {
+            background: #27ae60;
+            color: white;
+            font-size: 12px;
+            padding: 4px 12px;
+        }
+
+        .btn-pago {
+            background: #95a5a6;
+            cursor: default;
+            opacity: 0.6;
+        }
+
         .cards-premios {
             display: flex;
             flex-wrap: wrap;
@@ -203,6 +216,46 @@
         }
         .card-acumulado h3, .card-acumulado .valor {
             color: #FFD966;
+        }
+
+        .pix-card {
+            background: linear-gradient(135deg, #1a472a, #0e2a1f);
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid #ffd700;
+        }
+
+        .pix-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .pix-chave {
+            background: #2c3e2b;
+            padding: 10px 15px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #ffd700;
+            letter-spacing: 1px;
+        }
+
+        .btn-copiar {
+            background: #00b894;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         .regras-info {
@@ -289,6 +342,23 @@
             margin-left: 5px;
         }
 
+        .pagamento-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .pago {
+            background: #27ae60;
+            color: white;
+        }
+
+        .nao-pago {
+            background: #e74c3c;
+            color: white;
+        }
+
         .historico-area {
             background: #fef5e0;
             border-radius: 28px;
@@ -363,12 +433,14 @@
 
         .modal-conteudo {
             background: #fff9ef;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             border-radius: 48px;
             padding: 30px;
             text-align: center;
             box-shadow: 0 25px 40px black;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-conteudo select, .modal-conteudo input {
@@ -378,6 +450,20 @@
             border-radius: 60px;
             border: 2px solid #e2c17e;
             font-size: 1rem;
+        }
+
+        .lista-pagamentos {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .item-pagamento {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
         }
 
         .footer-cred {
@@ -435,6 +521,18 @@
         </div>
     </div>
 
+    <!-- Chave Pix -->
+    <div class="pix-card">
+        <div class="pix-info">
+            <span style="font-size: 2rem;">💰</span>
+            <div>
+                <strong style="color: #ffd700;">Chave Pix para depósitos:</strong><br>
+                <span class="pix-chave" id="pixChave">38176df8-22da-4bfd-9984-89fbe0d0e110</span>
+            </div>
+        </div>
+        <button class="btn-copiar" onclick="copiarPix()">📋 Copiar Chave</button>
+    </div>
+
     <div class="regras-info">
         <span>🏅 1ª Rodada: R$10 de cada (total R$60)</span>
         <span>🏅 2ª Rodada em diante: R$15 de cada (total R$90)</span>
@@ -456,6 +554,12 @@
     </div>
 
     <div class="tabela-participantes">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="color: #ffd700;">📊 Ranking e Pagamentos</h3>
+            <div style="display: flex; gap: 10px;">
+                <button id="btnGerenciarRodada" class="btn" style="background: #3498db;">📅 Gerenciar Rodada Atual</button>
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -463,7 +567,7 @@
                     <th>Time / Responsável</th>
                     <th>🏅 Títulos</th>
                     <th>💰 Total Ganho</th>
-                    <th>📊 Média por Título</th>
+                    <th>💵 Status Pagamento</th>
                 </tr>
             </thead>
             <tbody id="tabelaTimesBody">
@@ -481,14 +585,35 @@
         <div id="listaGanhadores" class="lista-historico">
             <div style="padding:20px; text-align:center;">🔄 Carregando histórico...</div>
         </div>
-        <div class="footer-cred" style="margin-top: 20px;">
-            ⚡ <strong>Regras atualizadas:</strong> 1ª rodada = R$10/pessoa. 2ª rodada em diante = R$15/pessoa. <br>
-            💰 Pote final: todo mês TODOS os 7 participantes depositam R$5 → acumula R$35/mês. Quem tiver maior pontuação TOTAL no campeonato leva tudo!<br>
-            🔄 <strong>Todos os dados são sincronizados automaticamente em tempo real via Firebase!</strong>
+    </div>
+</div>
+
+<!-- Modal Gerenciar Rodada -->
+<div id="modalGerenciarRodada" class="modal">
+    <div class="modal-conteudo">
+        <h2>📅 Gerenciar Rodada Atual</h2>
+        <div style="text-align: left;">
+            <label>📆 Data da Rodada:</label>
+            <input type="date" id="dataRodada" value="">
+            
+            <label>🏆 Ganhador da Rodada:</label>
+            <select id="selectGanhadorRodada"></select>
+            
+            <label>💰 Valor por pessoa:</label>
+            <input type="text" id="valorPorPessoa" readonly style="background: #f0f0f0;">
+            
+            <hr style="margin: 20px 0;">
+            
+            <h3>✅ Controle de Pagamentos</h3>
+            <div id="listaPagamentosModal" class="lista-pagamentos"></div>
+            
+            <button id="btnSalvarPagamentos" class="btn" style="background: #27ae60; width: 100%; margin-top: 20px;">💾 Salvar Pagamentos</button>
+            <button id="btnFecharModalPagamento" class="btn" style="background: #95a5a6; width: 100%; margin-top: 10px;">Fechar</button>
         </div>
     </div>
 </div>
 
+<!-- Modal Novo Ganhador -->
 <div id="modalNovoGanhador" class="modal">
     <div class="modal-conteudo">
         <h2>⚽ Registrar Novo Ganhador Mensal</h2>
@@ -496,9 +621,8 @@
         <label>Selecione o vencedor:</label>
         <select id="selectVencedor"></select>
         <div id="premioPreview" style="background:#e67e2211; padding:8px; border-radius:20px; margin:10px 0;"></div>
-        <button id="btnConfirmarGanhador" class="btn" style="background:#2c6e4a; color:white; width:100%; margin-top:16px;">✅ Confirmar Ganhador</button>
+        <button id="btnConfirmarGanhador" class="btn" style="background:#2c6e4a; color:white; width:100%; margin-top:16px;">✅ Confirmar Ganhador e Fechar Rodada</button>
         <button id="btnFecharModal" style="margin-top:12px; background:gray;">Cancelar</button>
-        <div id="msgModalErro" style="color:red; margin-top:10px;"></div>
     </div>
 </div>
 
@@ -507,7 +631,6 @@
 </div>
 
 <script>
-    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAnx8DasS6M4Yia2hi3i4NUj5Bg2P8oXG4",
         authDomain: "cartola-51bcd.firebaseapp.com",
@@ -518,21 +641,21 @@
         measurementId: "G-JP2EDKXB51"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // Referências das coleções
     const configRef = db.collection('config').doc('main');
     const historicoRef = db.collection('historico');
+    const pagamentosRef = db.collection('pagamentos');
     
-    // Dados locais
     let wins = new Array(7).fill(0);
     let ganhoMensalTotal = new Array(7).fill(0);
     let historicoGanhadores = [];
     let totalAcumuladoFinal = 0;
     let rodadasRealizadas = 0;
     let adminMode = false;
+    let pagamentosRodadaAtual = {};
+    let dataRodadaAtual = '';
     
     const membros = [
         { id: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi" },
@@ -548,6 +671,10 @@
         return rodadaNum === 1 ? 60 : 90;
     }
     
+    function getValorPorPessoa(rodadaNum) {
+        return rodadaNum === 1 ? 10 : 15;
+    }
+    
     function showToast(message, isError = false) {
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
@@ -557,36 +684,33 @@
         setTimeout(() => toast.remove(), 3000);
     }
     
-    async function salvarNoFirebase() {
-        if (!adminMode) return;
-        try {
-            await configRef.set({
-                wins: wins,
-                ganhoMensalTotal: ganhoMensalTotal,
-                totalAcumuladoFinal: totalAcumuladoFinal,
-                rodadasRealizadas: rodadasRealizadas,
-                ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            showToast('✅ Dados salvos no Firebase com sucesso!');
-        } catch (error) {
-            console.error('Erro ao salvar:', error);
-            showToast('❌ Erro ao salvar no Firebase', true);
+    function copiarPix() {
+        const pix = document.getElementById('pixChave').innerText;
+        navigator.clipboard.writeText(pix);
+        showToast('✅ Chave Pix copiada!');
+    }
+    
+    async function carregarPagamentosRodada(rodada) {
+        const doc = await pagamentosRef.doc(`rodada_${rodada}`).get();
+        if (doc.exists) {
+            pagamentosRodadaAtual = doc.data().pagamentos || {};
+        } else {
+            pagamentosRodadaAtual = {};
+            for (let i = 0; i < 7; i++) {
+                pagamentosRodadaAtual[i] = false;
+            }
         }
     }
     
-    async function adicionarGanhadorFirebase(ganhador) {
+    async function salvarPagamentosRodada(rodada) {
         if (!adminMode) return;
-        try {
-            await historicoRef.add({
-                ...ganhador,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                rodadaNum: ganhador.rodadaNum
-            });
-            showToast(`🏆 ${ganhador.nomeTime} registrado como campeão da ${ganhador.rodadaNum}ª rodada!`);
-        } catch (error) {
-            console.error('Erro ao adicionar histórico:', error);
-            showToast('❌ Erro ao registrar ganhador', true);
-        }
+        await pagamentosRef.doc(`rodada_${rodada}`).set({
+            pagamentos: pagamentosRodadaAtual,
+            data: dataRodadaAtual,
+            atualizado: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('✅ Pagamentos salvos!');
+        renderizarTudo();
     }
     
     function carregarDadosTempoReal() {
@@ -601,10 +725,6 @@
             } else {
                 inicializarDadosIniciais();
             }
-        }, (error) => {
-            console.error('Erro ao carregar config:', error);
-            document.getElementById('statusOnline').className = 'status-online status-offline';
-            document.getElementById('statusOnline').innerHTML = '🔴 Offline - Tentando reconectar...';
         });
         
         historicoRef.orderBy('rodadaNum', 'asc').onSnapshot((snapshot) => {
@@ -619,11 +739,9 @@
     async function inicializarDadosIniciais() {
         const doc = await configRef.get();
         if (!doc.exists) {
-            // CORREÇÃO: ExperiMonstra ganhou 2 vezes (1ª e 3ª rodada) - ÚNICO LÍDER
-            // Só 1° turno FC ganhou 1 vez (2ª rodada) - VICE-LÍDER
-            wins = [2, 1, 0, 0, 0, 0, 0]; // ExperiMonstra = 2 títulos (LÍDER)
-            ganhoMensalTotal = [150, 90, 0, 0, 0, 0, 0]; // ExperiMonstra: 60+90=150
-            totalAcumuladoFinal = 105; // 3 rodadas * R$35
+            wins = [2, 1, 0, 0, 0, 0, 0];
+            ganhoMensalTotal = [150, 90, 0, 0, 0, 0, 0];
+            totalAcumuladoFinal = 105;
             rodadasRealizadas = 3;
             
             await configRef.set({
@@ -634,30 +752,26 @@
                 ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            // Histórico correto
             const historicoInicial = [
-                { index: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi", premio: 60, rodadaNum: 1, valorPorPessoa: 10, dataStr: "1ª Rodada - R$10,00 de cada participante" },
-                { index: 1, nomeTime: "Só 1° turno FC", responsavel: "PStresser", premio: 90, rodadaNum: 2, valorPorPessoa: 15, dataStr: "2ª Rodada - R$15,00 de cada participante" },
-                { index: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi", premio: 90, rodadaNum: 3, valorPorPessoa: 15, dataStr: "3ª Rodada - R$15,00 de cada participante" }
+                { index: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi", premio: 60, rodadaNum: 1, valorPorPessoa: 10, dataStr: "1ª Rodada - R$10,00 de cada" },
+                { index: 1, nomeTime: "Só 1° turno FC", responsavel: "PStresser", premio: 90, rodadaNum: 2, valorPorPessoa: 15, dataStr: "2ª Rodada - R$15,00 de cada" },
+                { index: 0, nomeTime: "ExperiMonstra", responsavel: "Leandro Takahashi", premio: 90, rodadaNum: 3, valorPorPessoa: 15, dataStr: "3ª Rodada - R$15,00 de cada" }
             ];
             
             for (const hist of historicoInicial) {
                 await historicoRef.add({ ...hist, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
             }
             
-            showToast('🎉 Dados iniciais carregados! ExperiMonstra é o LÍDER com 2 títulos!');
+            showToast('🎉 Dados carregados! ExperiMonstra é LÍDER com 2 títulos!');
         }
     }
     
     async function registrarNovoGanhador(winnerId) {
-        if (!adminMode) {
-            showToast('🔒 Apenas admin pode registrar ganhadores!', true);
-            return false;
-        }
+        if (!adminMode) return false;
         
         const novaRodada = rodadasRealizadas + 1;
         const premio = getPremioRodada(novaRodada);
-        const valorPorPessoa = novaRodada === 1 ? 10 : 15;
+        const valorPorPessoa = getValorPorPessoa(novaRodada);
         
         wins[winnerId]++;
         ganhoMensalTotal[winnerId] += premio;
@@ -684,7 +798,7 @@
         
         await historicoRef.add({ ...novoGanhador, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
         
-        showToast(`🏆 ${membros[winnerId].nomeTime} venceu a ${novaRodada}ª rodada e recebeu R$${premio}!`);
+        showToast(`🏆 ${membros[winnerId].nomeTime} venceu a ${novaRodada}ª rodada!`);
         return true;
     }
     
@@ -692,7 +806,6 @@
         const tbody = document.getElementById("tabelaTimesBody");
         tbody.innerHTML = "";
         
-        // Criar array com índices e ordenar por número de títulos (decrescente)
         const ranking = [];
         for (let i = 0; i < membros.length; i++) {
             ranking.push({
@@ -700,21 +813,18 @@
                 nomeTime: membros[i].nomeTime,
                 responsavel: membros[i].responsavel,
                 vitorias: wins[i],
-                totalGanho: ganhoMensalTotal[i],
-                media: wins[i] > 0 ? (ganhoMensalTotal[i] / wins[i]).toFixed(2) : "0"
+                totalGanho: ganhoMensalTotal[i]
             });
         }
         
-        // Ordenar por títulos (maior para menor)
         ranking.sort((a, b) => b.vitorias - a.vitorias);
-        
-        // Determinar o verdadeiro líder (primeiro da lista com mais títulos)
         const maxTitulos = ranking[0]?.vitorias || 0;
         
         for (let pos = 0; pos < ranking.length; pos++) {
             const r = ranking[pos];
             const isLider = (pos === 0 && r.vitorias === maxTitulos && r.vitorias > 0);
             const medalha = pos === 0 ? '🥇' : (pos === 1 ? '🥈' : (pos === 2 ? '🥉' : `${pos + 1}º`));
+            const pagou = pagamentosRodadaAtual[r.id] || false;
             
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -731,7 +841,11 @@
                 </td>
                 <td><span class="badge-vitorias ${isLider ? 'badge-campeao' : ''}">${r.vitorias} título${r.vitorias !== 1 ? 's' : ''}</span></td>
                 <td style="color:#FFE484; font-weight:bold;">R$ ${r.totalGanho.toFixed(2)}</td>
-                <td>R$ ${r.media}</td>
+                <td>
+                    <span class="pagamento-status ${pagou ? 'pago' : 'nao-pago'}">
+                        ${pagou ? '✅ PAGO' : '⏳ PENDENTE'}
+                    </span>
+                </td>
             `;
             tbody.appendChild(tr);
         }
@@ -744,16 +858,16 @@
     function renderizarHistorico() {
         const listaDiv = document.getElementById("listaGanhadores");
         if(historicoGanhadores.length === 0) {
-            listaDiv.innerHTML = "<div style='padding:20px; text-align:center;'>Nenhum ganhador registrado ainda.</div>";
+            listaDiv.innerHTML = "<div style='padding:20px; text-align:center;'>Nenhum ganhador registrado.</div>";
             return;
         }
         
         listaDiv.innerHTML = "";
-        // Mostrar histórico em ordem decrescente (mais recente primeiro)
         historicoGanhadores.slice().reverse().forEach(ganh => {
             const divCard = document.createElement("div");
             divCard.className = "card-ganhador";
-            const ehBicampeao = historicoGanhadores.filter(h => h.index === ganh.index && h.rodadaNum <= ganh.rodadaNum).length >= 2;
+            const vitoriasDoParticipante = historicoGanhadores.filter(h => h.index === ganh.index).length;
+            const ehBicampeao = vitoriasDoParticipante >= 2;
             divCard.innerHTML = `
                 <div>
                     <strong>🏆 ${ganh.nomeTime}</strong> - ${ganh.responsavel}<br>
@@ -768,23 +882,80 @@
         });
     }
     
+    function abrirModalGerenciarRodada() {
+        if (!adminMode) {
+            showToast('🔒 Apenas ADMIN pode gerenciar pagamentos!', true);
+            return;
+        }
+        
+        const proximaRodada = rodadasRealizadas + 1;
+        document.getElementById('dataRodada').value = new Date().toISOString().split('T')[0];
+        document.getElementById('valorPorPessoa').value = `R$ ${getValorPorPessoa(proximaRodada).toFixed(2)} por pessoa`;
+        
+        const selectGanhador = document.getElementById('selectGanhadorRodada');
+        selectGanhador.innerHTML = '<option value="">Selecione o ganhador (opcional)</option>';
+        membros.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = `${m.nomeTime} - ${m.responsavel}`;
+            selectGanhador.appendChild(option);
+        });
+        
+        carregarListaPagamentosModal();
+        document.getElementById('modalGerenciarRodada').classList.add('modal-aberto');
+    }
+    
+    function carregarListaPagamentosModal() {
+        const container = document.getElementById('listaPagamentosModal');
+        container.innerHTML = '<h4>Marque quem já pagou a rodada:</h4>';
+        
+        membros.forEach(membro => {
+            const div = document.createElement('div');
+            div.className = 'item-pagamento';
+            div.innerHTML = `
+                <span><strong>${membro.nomeTime}</strong><br><small>${membro.responsavel}</small></span>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="pagamento_${membro.id}" ${pagamentosRodadaAtual[membro.id] ? 'checked' : ''}>
+                    <span>✅ PAGOU</span>
+                </label>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    async function salvarPagamentosModal() {
+        const proximaRodada = rodadasRealizadas + 1;
+        
+        membros.forEach(membro => {
+            const checkbox = document.getElementById(`pagamento_${membro.id}`);
+            pagamentosRodadaAtual[membro.id] = checkbox.checked;
+        });
+        
+        await salvarPagamentosRodada(proximaRodada);
+        document.getElementById('modalGerenciarRodada').classList.remove('modal-aberto');
+    }
+    
     function atualizarInterfaceAdmin() {
         const btnNovo = document.getElementById("btnAbrirModalNovo");
+        const btnGerenciar = document.getElementById("btnGerenciarRodada");
         if(adminMode) {
             btnNovo.disabled = false;
             btnNovo.style.opacity = "1";
+            btnGerenciar.disabled = false;
+            btnGerenciar.style.opacity = "1";
             document.getElementById("statusAdmin").innerHTML = "🔓 ADMIN ativo";
         } else {
             btnNovo.disabled = true;
             btnNovo.style.opacity = "0.5";
+            btnGerenciar.disabled = true;
+            btnGerenciar.style.opacity = "0.5";
             document.getElementById("statusAdmin").innerHTML = "👤 visitante (somente leitura)";
         }
     }
     
-    const modal = document.getElementById("modalNovoGanhador");
+    const modalNovo = document.getElementById("modalNovoGanhador");
+    const modalPagamento = document.getElementById("modalGerenciarRodada");
     const selectVencedor = document.getElementById("selectVencedor");
-    const premioPreview = document.getElementById("premioPreview");
-    const modalRodadaInfo = document.getElementById("modalRodadaInfo");
     
     function popularSelectVencedor() {
         selectVencedor.innerHTML = "";
@@ -800,9 +971,11 @@
     function atualizarPreviewPremio() {
         const proxRodada = rodadasRealizadas + 1;
         const premio = getPremioRodada(proxRodada);
-        const valorPorPessoa = proxRodada === 1 ? 10 : 15;
-        modalRodadaInfo.innerHTML = `📅 PRÓXIMA RODADA: ${proxRodada}ª rodada do grupo<br>💰 Cada participante paga R$${valorPorPessoa},00 ao vencedor (+R$5 para o pote final)`;
-        premioPreview.innerHTML = `🏅 O GANHADOR RECEBERÁ: <strong style="font-size:1.4rem;">R$ ${premio.toFixed(2)}</strong> (R$${valorPorPessoa},00 de cada um dos outros 6)`;
+        const valorPorPessoa = getValorPorPessoa(proxRodada);
+        const modalRodadaInfo = document.getElementById("modalRodadaInfo");
+        const premioPreview = document.getElementById("premioPreview");
+        modalRodadaInfo.innerHTML = `📅 PRÓXIMA RODADA: ${proxRodada}ª rodada<br>💰 Cada participante paga R$${valorPorPessoa},00 ao vencedor (+R$5 para o pote final)`;
+        premioPreview.innerHTML = `🏅 O GANHADOR RECEBERÁ: <strong style="font-size:1.4rem;">R$ ${premio.toFixed(2)}</strong>`;
     }
     
     const senhaPadrao = "1a2b3c4d";
@@ -812,9 +985,9 @@
             adminMode = true;
             atualizarInterfaceAdmin();
             document.getElementById("senhaAdminInput").value = "";
-            showToast('🔓 Modo admin ativado! Você pode registrar novos ganhadores.');
+            showToast('🔓 Modo admin ativado!');
         } else {
-            showToast('❌ Senha incorreta! Acesso negado.', true);
+            showToast('❌ Senha incorreta!', true);
             adminMode = false;
             atualizarInterfaceAdmin();
         }
@@ -822,46 +995,45 @@
     
     document.getElementById("btnAbrirModalNovo").addEventListener("click", () => {
         if(!adminMode) {
-            showToast('🔒 Apenas ADMIN pode registrar novos ganhadores!', true);
+            showToast('🔒 Apenas ADMIN pode registrar ganhadores!', true);
             return;
         }
         popularSelectVencedor();
-        atualizarPreviewPremio();
-        document.getElementById("msgModalErro").innerText = "";
-        modal.classList.add("modal-aberto");
+        document.getElementById("modalNovoGanhador").classList.add("modal-aberto");
     });
     
+    document.getElementById("btnGerenciarRodada").addEventListener("click", async () => {
+        const proximaRodada = rodadasRealizadas + 1;
+        await carregarPagamentosRodada(proximaRodada);
+        abrirModalGerenciarRodada();
+    });
+    
+    document.getElementById("btnSalvarPagamentos").addEventListener("click", salvarPagamentosModal);
+    document.getElementById("btnFecharModalPagamento").addEventListener("click", () => {
+        modalPagamento.classList.remove("modal-aberto");
+    });
     document.getElementById("btnFecharModal").addEventListener("click", () => {
-        modal.classList.remove("modal-aberto");
+        modalNovo.classList.remove("modal-aberto");
     });
     
     document.getElementById("btnConfirmarGanhador").addEventListener("click", async () => {
-        if(!adminMode) {
-            showToast('Permissão negada!', true);
-            modal.classList.remove("modal-aberto");
-            return;
-        }
+        if(!adminMode) return;
         const winnerIdx = parseInt(selectVencedor.value);
         if(isNaN(winnerIdx)) return;
-        
         await registrarNovoGanhador(winnerIdx);
-        modal.classList.remove("modal-aberto");
+        modalNovo.classList.remove("modal-aberto");
+        // Limpar pagamentos da rodada anterior
+        pagamentosRodadaAtual = {};
     });
-    
-    firebase.firestore().enableNetwork().then(() => {
-        document.getElementById('statusOnline').className = 'status-online';
-        document.getElementById('statusOnline').innerHTML = '🟢 Conectado ao Firebase';
-    }).catch(() => {
-        document.getElementById('statusOnline').className = 'status-online status-offline';
-        document.getElementById('statusOnline').innerHTML = '🔴 Offline';
-    });
-    
-    carregarDadosTempoReal();
-    atualizarInterfaceAdmin();
     
     window.onclick = function(e) {
-        if(e.target === modal) modal.classList.remove("modal-aberto");
+        if(e.target === modalNovo) modalNovo.classList.remove("modal-aberto");
+        if(e.target === modalPagamento) modalPagamento.classList.remove("modal-aberto");
     };
+    
+    // Iniciar
+    carregarDadosTempoReal();
+    atualizarInterfaceAdmin();
 </script>
 </body>
 </html>
