@@ -835,6 +835,9 @@
 
     // ========== FIREBASE: CARREGAR ==========
     function carregarDadosTempoReal() {
+        // Listeners iniciados em sequência para evitar bug "Target ID already exists"
+        // do Firestore compat v10 com múltiplos onSnapshot simultâneos
+
         configRef.onSnapshot(doc => {
             if (doc.exists) {
                 const d = doc.data();
@@ -847,31 +850,32 @@
             }
             renderizarHome();
             renderizarStats();
+            document.getElementById('statusOnline').className = 'status-pill status-on';
+            document.getElementById('statusOnline').innerHTML = '🟢 Firebase';
         }, err => {
+            console.error('Config listener error:', err);
             document.getElementById('statusOnline').className = 'status-pill status-off';
             document.getElementById('statusOnline').innerHTML = '🔴 Offline';
         });
 
-        historicoRef.orderBy('rodadaNum', 'asc').onSnapshot(snap => {
-            historicoGanhadores = [];
-            snap.forEach(doc => historicoGanhadores.push({ id: doc.id, ...doc.data() }));
-            renderizarHistorico();
-            renderizarHome();
-            popularSelectRodadaPag();
-        });
+        setTimeout(() => {
+            historicoRef.orderBy('rodadaNum', 'asc').onSnapshot(snap => {
+                historicoGanhadores = [];
+                snap.forEach(doc => historicoGanhadores.push({ id: doc.id, ...doc.data() }));
+                renderizarHistorico();
+                renderizarHome();
+                popularSelectRodadaPag();
+            }, err => console.error('Historico listener error:', err));
+        }, 300);
 
-        pagamentosRef.onSnapshot(snap => {
-            pagamentosData = {};
-            snap.forEach(doc => { pagamentosData[doc.id] = doc.data(); });
-            renderizarPagamentos();
-            renderizarProgPagamentosHome();
-        });
-
-        firebase.firestore().enableNetwork()
-            .then(() => {
-                document.getElementById('statusOnline').className = 'status-pill status-on';
-                document.getElementById('statusOnline').innerHTML = '🟢 Firebase';
-            });
+        setTimeout(() => {
+            pagamentosRef.onSnapshot(snap => {
+                pagamentosData = {};
+                snap.forEach(doc => { pagamentosData[doc.id] = doc.data(); });
+                renderizarPagamentos();
+                renderizarProgPagamentosHome();
+            }, err => console.error('Pagamentos listener error:', err));
+        }, 600);
     }
 
     async function inicializarDadosIniciais() {
